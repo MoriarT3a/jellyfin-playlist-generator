@@ -59,12 +59,56 @@ chmod +x jellyfin_playlist_generator.py
 python3 jellyfin_playlist_generator.py your_playlist.csv
 ```
 
-3. **Follow the prompts**:
-   - The script will auto-detect your Jellyfin paths (or ask for them)
+3. **Configure paths**:
+   - The script will try to auto-detect your music library and Jellyfin playlist directories
+   - If found, it will ask for confirmation
+   - If not found, you'll be prompted to enter the paths manually
+
+   **Example interaction**:
+   ```
+   🔍 Auto-detecting Jellyfin paths...
+   ✅ Music library found: /media/music
+   Use this path? [Y/n]: y
+   ❌ No playlist directory auto-detected
+   💡 Common locations: /var/lib/jellyfin/data/playlists, /config/data/playlists
+   Enter Jellyfin playlist directory path: /var/lib/jellyfin/data/playlists
+   ```
+
+4. **Follow the remaining prompts**:
    - Enter a name for your playlist
    - Watch as it finds your tracks with impressive accuracy!
 
-4. **Scan your Jellyfin library** to make the playlist appear
+5. **Scan your Jellyfin library** to make the playlist appear
+
+## 📁 Path Configuration
+
+### Music Library Structure
+
+The tool expects your music to be organized in a standard format:
+```
+/your/music/path/
+├── Artist 1/
+│   ├── Album 1/
+│   │   ├── 01 - Song 1.flac
+│   │   └── 02 - Song 2.mp3
+│   └── Album 2/
+└── Artist 2/
+    └── Album 3/
+```
+
+### Common Music Library Locations
+
+- **Linux**: `/media/music`, `/mnt/music`, `/home/user/Music`
+- **Docker**: `/config/music`, `/app/music`, `/data/music`
+- **NAS**: `/nas/music`, `/storage/music`
+- **Custom mounts**: `/mnt/your-drive/music`
+
+### Jellyfin Playlist Directory
+
+This is where Jellyfin stores its playlist files:
+- **Standard**: `/var/lib/jellyfin/data/playlists`
+- **Docker**: `/config/data/playlists`
+- **Custom**: Check your Jellyfin configuration
 
 ## 📊 Expected Results
 

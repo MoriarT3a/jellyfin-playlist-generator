@@ -21,13 +21,20 @@ import unicodedata
 def find_jellyfin_paths():
     """Auto-detect common Jellyfin installation paths"""
     common_music_paths = [
-        "/mnt/datapool/music",
         "/media/music", 
+        "/mnt/music",
+        "/mnt/media/music",
         "/var/lib/jellyfin/music",
         "/home/jellyfin/music",
         "/music",
         "/data/music",
-        "/srv/music"
+        "/srv/music",
+        "/opt/music",
+        "/storage/music",
+        "/nas/music",
+        # Docker common paths
+        "/config/music",
+        "/app/music"
     ]
     
     common_playlist_paths = [
@@ -73,14 +80,37 @@ def get_user_paths():
         if use_auto in ['', 'y', 'yes']:
             music_path = auto_music
         else:
-            music_path = input("Enter music library path: ").strip()
+            music_path = input("Enter your music library path: ").strip()
     else:
         print("❌ No music library auto-detected")
-        music_path = input("Enter music library path (e.g., /mnt/music): ").strip()
+        print("💡 Common locations: /media/music, /mnt/music, /home/user/Music")
+        music_path = input("Enter your music library path: ").strip()
     
     # Validate music path
+    if not music_path:
+        print("❌ Music path cannot be empty!")
+        sys.exit(1)
+    
     if not os.path.exists(music_path):
         print(f"❌ Music path does not exist: {music_path}")
+        print("💡 Make sure the path is correct and accessible")
+        sys.exit(1)
+    
+    if not os.path.isdir(music_path):
+        print(f"❌ Music path is not a directory: {music_path}")
+        sys.exit(1)
+    
+    # Check if directory has music-like content
+    try:
+        subdirs = [d for d in os.listdir(music_path) if os.path.isdir(os.path.join(music_path, d))]
+        if len(subdirs) == 0:
+            print(f"⚠️  Warning: No subdirectories found in {music_path}")
+            print("💡 Expected structure: MusicLibrary/Artist/Album/tracks")
+            confirm = input("Continue anyway? [y/N]: ").strip().lower()
+            if confirm not in ['y', 'yes']:
+                sys.exit(1)
+    except PermissionError:
+        print(f"❌ No permission to read directory: {music_path}")
         sys.exit(1)
     
     # Playlist path  
@@ -90,15 +120,30 @@ def get_user_paths():
         if use_auto in ['', 'y', 'yes']:
             playlist_path = auto_playlists
         else:
-            playlist_path = input("Enter playlist directory path: ").strip()
+            playlist_path = input("Enter Jellyfin playlist directory path: ").strip()
     else:
         print("❌ No playlist directory auto-detected")
-        playlist_path = input("Enter Jellyfin playlist path (e.g., /var/lib/jellyfin/data/playlists): ").strip()
+        print("💡 Common locations: /var/lib/jellyfin/data/playlists, /config/data/playlists")
+        playlist_path = input("Enter Jellyfin playlist directory path: ").strip()
     
     # Validate playlist path
+    if not playlist_path:
+        print("❌ Playlist path cannot be empty!")
+        sys.exit(1)
+        
     if not os.path.exists(playlist_path):
         print(f"❌ Playlist path does not exist: {playlist_path}")
+        print("💡 This should be your Jellyfin data/playlists directory")
         sys.exit(1)
+    
+    if not os.path.isdir(playlist_path):
+        print(f"❌ Playlist path is not a directory: {playlist_path}")
+        sys.exit(1)
+    
+    # Check write permissions
+    if not os.access(playlist_path, os.W_OK):
+        print(f"⚠️  Warning: No write permission to {playlist_path}")
+        print("💡 You may need to run with sudo or fix permissions")
     
     return music_path, playlist_path
 
