@@ -6,7 +6,7 @@ Converts music playlists from various formats (CSV, TXT) into Jellyfin-native XM
 Originally created to solve the limitations of existing playlist import tools.
 Supports multi-stage fuzzy matching, FLAC preference, and interactive selection.
 
-Author: MoriarT3a
+Author: Community Project
 License: MIT
 """
 
