@@ -80,6 +80,8 @@ python3 jellyfin_playlist_generator.py your_playlist.csv
 
 5. **Scan your Jellyfin library** to make the playlist appear
 
+6. **⚠️ Important UI Workaround**: See the troubleshooting section below if the playlist doesn't display correctly in the Jellyfin UI.
+
 ## 📁 Path Configuration
 
 ### Music Library Structure
@@ -187,6 +189,26 @@ The script auto-detects common Jellyfin paths:
 2. Should show `jellyfin:jellyfin` ownership
 3. Scan your music library in Jellyfin Dashboard
 4. Restart Jellyfin if needed: `sudo systemctl restart jellyfin`
+
+### Playlist appears but doesn't work correctly in UI?
+
+**⚠️ Known UI Issue & Workaround:**
+
+If the imported playlist appears in Jellyfin but doesn't display or function correctly in the web interface, use this workaround:
+
+**Important:** The tool imports playlists with an `x_` prefix (e.g., if you named your playlist "MyPlaylist", it will appear as "x_MyPlaylist").
+
+**Step-by-step solution:**
+1. **Create a new playlist** in the Jellyfin UI with your desired name (e.g., "MyPlaylist")
+2. **Copy all tracks** from the imported playlist:
+   - Go to the imported playlist `x_MyPlaylist`
+   - Click the three dots menu (⋯)
+   - Select "Add to Playlist"
+   - Choose your newly created playlist "MyPlaylist"
+   - All tracks will be copied in one step
+3. **Delete the imported playlist** `x_MyPlaylist` as it's no longer needed
+
+This workaround ensures the playlist works perfectly with the Jellyfin UI while maintaining all the accurate track matching from the generator.
 
 ### Low match rates?
 - Ensure your music files follow standard naming: `Artist/Album/Track - Title.ext`
